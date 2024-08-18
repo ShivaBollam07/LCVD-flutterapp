@@ -1,16 +1,31 @@
-# lcvd
+# Leaf Curl Virus Detection
 
-A new Flutter project.
+This is a flutter app that uses our backend api to predict the presence of leaf curl virus in a plant using image of its leaf. The user needs to upload a cropped image for best performance
 
-## Getting Started
+## Running this Project
 
-This project is a starting point for a Flutter application.
+This project is a initial version of application and many features are to be implemented.
 
-A few resources to get you started if this is your first Flutter project:
+for running the application setup flutter on your machine with a compatible physical/virtual device. For more info visit [this](https://docs.flutter.dev/get-started/install) site.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+For running the project first clone the project using:
+```
+git clone https://github.com/dlsathvik04/LCVD-flutterapp.git
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+change directory to the repository root
+```
+cd LCVD-flutterapp
+```
+get the dependencies and run the project
+```
+flutter pub get
+flutter run
+```
+### Building installable APK
+
+in the project root run 
+```
+flutter build apk --release
+```
+
