@@ -29,3 +29,6 @@ in the project root run
 flutter build apk --release
 ```
 
+## Screen Shots
+![alt text](image.png)
+
