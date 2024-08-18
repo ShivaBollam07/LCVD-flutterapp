@@ -1,4 +1,4 @@
-package com.example.lcdvd
+package com.example.lcvd
 
 import io.flutter.embedding.android.FlutterActivity
 

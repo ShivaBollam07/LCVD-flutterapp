@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:lcdvd/models/prediction_data.dart';
+import 'package:lcvd/models/prediction_data.dart';
 
 class PredictionCard extends StatelessWidget {
   final PredictionData predictionData;

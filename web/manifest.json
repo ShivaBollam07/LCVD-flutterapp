@@ -1,6 +1,6 @@
 {
-    "name": "lcdvd",
-    "short_name": "lcdvd",
+    "name": "lcvd",
+    "short_name": "lcvd",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

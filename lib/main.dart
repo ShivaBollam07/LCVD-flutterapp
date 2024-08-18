@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lcdvd/models/prediction_data.dart';
-import 'package:lcdvd/widgets/image_capture_button.dart';
-import 'package:lcdvd/widgets/prediction_card.dart';
+import 'package:lcvd/models/prediction_data.dart';
+import 'package:lcvd/widgets/image_capture_button.dart';
+import 'package:lcvd/widgets/prediction_card.dart';
 
 
 
