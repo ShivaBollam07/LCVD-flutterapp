@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lcvd/api/predict.dart';
 import 'package:lcvd/models/prediction_data.dart';
@@ -85,10 +86,39 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
         // Copy the picked image to the application's document directory
         final fileName = path.basename(pickedFile.path);
 
-        final savedImage = await File(pickedFile.path)
-            .copy(path.join(imagesDir.path, fileName));
+        // final savedImage = await File(pickedFile.path)
+        //     .copy(path.join(imagesDir.path, fileName));
 
         // await Future.delayed(const Duration(seconds: 3));
+        CroppedFile? croppedFile;
+        if (mounted){
+          croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop into the leaf',
+              hideBottomControls: true,
+              // toolbarColor: Colors.deepOrange,
+              // toolbarWidgetColor: Colors.white
+            ),
+            IOSUiSettings(
+              title: 'Crop into the leaf',
+            ),
+            WebUiSettings(
+              rotatable: false,
+              context: context,
+            ),
+          ],
+        );
+        }
+        
+
+        final savedImage = await File(croppedFile!.path)
+            .copy(path.join(imagesDir.path, fileName));
+
+        
+
         PredictionData? predictionData = await uploadFile(
             savedImage, "https://lcda-backend.onrender.com/predict");
         if (predictionData != null) {
@@ -100,7 +130,7 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
               SnackBar(content: Text('Image saved: ${savedImage.path}')),
             );
           }
-        }else{
+        } else {
           await savedImage.delete();
           if (mounted) {
             // Only use context if the widget is still mounted
@@ -108,11 +138,78 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
               const SnackBar(content: Text('An error occured')),
             );
           }
-
         }
       }
     }
   }
+
+  // Future<void> _pickImageAndSave() async {
+  //   final picker = ImagePicker();
+
+  //   // Show dialog to choose between camera and gallery
+  //   final source = await showDialog<ImageSource>(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('Select Image Source'),
+  //       actions: <Widget>[
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context, ImageSource.camera),
+  //           child: const Text('Camera'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context, ImageSource.gallery),
+  //           child: const Text('Gallery'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+
+  //   if (source != null) {
+  //     // Pick the image
+  //     final pickedFile = await picker.pickImage(source: source);
+
+  //     if (pickedFile != null) {
+  //       // Get the application's document directory
+  //       final directory = await getApplicationDocumentsDirectory();
+  //       final imagesDir = Directory(path.join(directory.path, 'images'));
+
+  //       // Create the images directory if it doesn't exist
+  //       if (!imagesDir.existsSync()) {
+  //         imagesDir.createSync(recursive: true);
+  //       }
+
+  //       // Copy the picked image to the application's document directory
+  //       final fileName = path.basename(pickedFile.path);
+
+  //       final savedImage = await File(pickedFile.path)
+  //           .copy(path.join(imagesDir.path, fileName));
+
+  //       // await Future.delayed(const Duration(seconds: 3));
+
+  //       PredictionData? predictionData = await uploadFile(
+  //           savedImage, "https://lcda-backend.onrender.com/predict");
+  //       if (predictionData != null) {
+  //         _addPrediction(predictionData);
+
+  //         if (mounted) {
+  //           // Only use context if the widget is still mounted
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text('Image saved: ${savedImage.path}')),
+  //           );
+  //         }
+  //       }else{
+  //         await savedImage.delete();
+  //         if (mounted) {
+  //           // Only use context if the widget is still mounted
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             const SnackBar(content: Text('An error occured')),
+  //           );
+  //         }
+
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

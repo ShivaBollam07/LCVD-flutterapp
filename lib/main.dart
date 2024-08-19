@@ -44,13 +44,13 @@ class HomePageState extends State<HomePage> {
     predictionBox = Hive.box<PredictionData>('predictionBox');
   }
 
-  void _addPrediction(PredictionData data) {
-    predictionBox?.add(data);
-  }
+  // void _addPrediction(PredictionData data) {
+  //   predictionBox?.add(data);
+  // }
 
-  void _deletePrediction(int index) {
-    predictionBox?.deleteAt(index);
-  }
+  // void _deletePrediction(int index) {
+  //   predictionBox?.deleteAt(index);
+  // }
 
   @override
   Widget build(BuildContext context) {
