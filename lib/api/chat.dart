@@ -7,7 +7,7 @@ import 'package:lcvd/api/endpoints.dart';
 
 Future<String?> getChatResponse(String prompt, String disease) async {
     
-    var request = http.MultipartRequest('POST', Uri.parse(ChatURL));
+    var request = http.MultipartRequest('POST', Uri.parse(chatURL));
     request.fields.addAll(<String, String>{
       "question": prompt,
       "disease_name" : disease,

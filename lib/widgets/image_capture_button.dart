@@ -83,13 +83,8 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
           imagesDir.createSync(recursive: true);
         }
 
-        // Copy the picked image to the application's document directory
         final fileName = path.basename(pickedFile.path);
 
-        // final savedImage = await File(pickedFile.path)
-        //     .copy(path.join(imagesDir.path, fileName));
-
-        // await Future.delayed(const Duration(seconds: 3));
         CroppedFile? croppedFile;
         if (mounted){
           croppedFile = await ImageCropper().cropImage(
@@ -143,73 +138,6 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
     }
   }
 
-  // Future<void> _pickImageAndSave() async {
-  //   final picker = ImagePicker();
-
-  //   // Show dialog to choose between camera and gallery
-  //   final source = await showDialog<ImageSource>(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Select Image Source'),
-  //       actions: <Widget>[
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context, ImageSource.camera),
-  //           child: const Text('Camera'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context, ImageSource.gallery),
-  //           child: const Text('Gallery'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-
-  //   if (source != null) {
-  //     // Pick the image
-  //     final pickedFile = await picker.pickImage(source: source);
-
-  //     if (pickedFile != null) {
-  //       // Get the application's document directory
-  //       final directory = await getApplicationDocumentsDirectory();
-  //       final imagesDir = Directory(path.join(directory.path, 'images'));
-
-  //       // Create the images directory if it doesn't exist
-  //       if (!imagesDir.existsSync()) {
-  //         imagesDir.createSync(recursive: true);
-  //       }
-
-  //       // Copy the picked image to the application's document directory
-  //       final fileName = path.basename(pickedFile.path);
-
-  //       final savedImage = await File(pickedFile.path)
-  //           .copy(path.join(imagesDir.path, fileName));
-
-  //       // await Future.delayed(const Duration(seconds: 3));
-
-  //       PredictionData? predictionData = await uploadFile(
-  //           savedImage, "https://lcda-backend.onrender.com/predict");
-  //       if (predictionData != null) {
-  //         _addPrediction(predictionData);
-
-  //         if (mounted) {
-  //           // Only use context if the widget is still mounted
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text('Image saved: ${savedImage.path}')),
-  //           );
-  //         }
-  //       }else{
-  //         await savedImage.delete();
-  //         if (mounted) {
-  //           // Only use context if the widget is still mounted
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             const SnackBar(content: Text('An error occured')),
-  //           );
-  //         }
-
-  //       }
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

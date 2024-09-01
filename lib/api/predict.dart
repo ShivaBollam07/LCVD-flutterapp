@@ -9,7 +9,7 @@ Future<PredictionData?> uploadFile(File file) async {
   try {
     var dateTime = DateTime.now();
     // Create a multipart request
-    var request = http.MultipartRequest('POST', Uri.parse(ImagePredictionURL));
+    var request = http.MultipartRequest('POST', Uri.parse(imagePredictionURL));
 
     // Attach the file to the request
     var fileStream = http.ByteStream(file.openRead());

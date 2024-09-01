@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:lcvd/widgets/prediction_details_page.dart';
+import 'package:lcvd/pages/prediction_details_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:lcvd/models/prediction_data.dart';

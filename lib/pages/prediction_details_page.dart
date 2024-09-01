@@ -34,9 +34,6 @@ class PredictionDetailsPageState extends State<PredictionDetailsPage> {
   void initState() {
     super.initState();
     predictionBox = Hive.box<PredictionData>('predictionBox');
-    if (predictionBox == null) {
-      print("prediction box is null");
-    }
     messages = predictionBox!.getAt(widget.boxIndex)!.chat!;
   }
 
@@ -64,21 +61,12 @@ class PredictionDetailsPageState extends State<PredictionDetailsPage> {
         setMessages();
       });
     } catch (e) {
-      print("came here");
       setState(() {
         messages[messages.length - 1] = e.toString();
         isBotResponding = false;
         setMessages();
       });
     }
-    // Future.delayed(const Duration(seconds: 2), () {
-    //   setState(() {
-    //     messages[messages.length - 1] =
-    //         "Bot: You selected $message lorem halkdjfa fahdkjfha dahdfklad ajdhfkjad fjadhfkajdf adfbajkldf ajdfkjadf jadhfkadf akdhfkadf akhdfkadskf aldsfhkjadfkla";
-    //     isBotResponding = false;
-    //     setMessages();
-    //   });
-    // });
   }
 
   @override
@@ -106,7 +94,7 @@ class PredictionDetailsPageState extends State<PredictionDetailsPage> {
                           : Alignment.centerLeft,
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                            maxWidth: MediaQuery.sizeOf(context).width * 3 / 4),
+                            maxWidth: MediaQuery.sizeOf(context).width * 4 / 5),
                         child: Container(
                           padding: const EdgeInsets.all(10.0),
                           margin: const EdgeInsets.symmetric(
