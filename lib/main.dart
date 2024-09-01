@@ -10,6 +10,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(PredictionDataAdapter());
   await Hive.openBox<PredictionData>('predictionBox');
+
   runApp(const MyApp());
 }
 
@@ -44,14 +45,6 @@ class HomePageState extends State<HomePage> {
     predictionBox = Hive.box<PredictionData>('predictionBox');
   }
 
-  // void _addPrediction(PredictionData data) {
-  //   predictionBox?.add(data);
-  // }
-
-  // void _deletePrediction(int index) {
-  //   predictionBox?.deleteAt(index);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,29 +62,11 @@ class HomePageState extends State<HomePage> {
             itemCount: box.length,
             itemBuilder: (context, index) {
               final prediction = box.getAt(index);
-              // return ListTile(
-              //   title: Text(prediction?.prediction ?? ''),
-              //   subtitle: Text(prediction?.dateTime?.toString() ?? ''),
-              //   trailing: IconButton(
-              //     icon: const Icon(Icons.delete),
-              //     onPressed: () => _deletePrediction(index),
-              //   ),
-              // );
-              return PredictionCard(predictionData: prediction!);
+              return PredictionCard(predictionData: prediction!, active: prediction.prediction != "Healthy", boxIndex: index,);
             },
           );
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     _addPrediction(PredictionData(
-      //       prediction: "New Prediction",
-      //       dateTime: DateTime.now(),
-      //       imageName: "new_image.png",
-      //     ));
-      //   },
-      //   child: const Icon(Icons.add),
-      // ),
       floatingActionButton: const ImagePickerButton(),
     );
   }

@@ -120,7 +120,7 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
         
 
         PredictionData? predictionData = await uploadFile(
-            savedImage, "https://lcda-backend.onrender.com/predict");
+            savedImage);
         if (predictionData != null) {
           _addPrediction(predictionData);
 

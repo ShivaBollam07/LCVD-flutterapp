@@ -13,5 +13,10 @@ class PredictionData extends HiveObject {
   @HiveField(2)
   String? imageName;
 
-  PredictionData({this.prediction, this.dateTime, this.imageName});
+  
+
+  @HiveField(3, defaultValue: <String>[])
+  List<String>? chat;
+
+  PredictionData({this.prediction, this.dateTime, this.imageName, this.chat});
 }

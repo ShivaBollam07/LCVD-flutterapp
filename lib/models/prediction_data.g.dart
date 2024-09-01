@@ -20,19 +20,22 @@ class PredictionDataAdapter extends TypeAdapter<PredictionData> {
       prediction: fields[0] as String?,
       dateTime: fields[1] as DateTime?,
       imageName: fields[2] as String?,
+      chat: fields[3] == null ? [] : (fields[3] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, PredictionData obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.prediction)
       ..writeByte(1)
       ..write(obj.dateTime)
       ..writeByte(2)
-      ..write(obj.imageName);
+      ..write(obj.imageName)
+      ..writeByte(3)
+      ..write(obj.chat);
   }
 
   @override
