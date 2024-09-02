@@ -21,8 +21,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple, // Set the app's primary theme color
+        colorSchemeSeed: Colors.green,
+        // colorScheme: ColorScheme.fromSwatch(
+        //   primarySwatch: Colors.purple,
+        // ).copyWith(
+        //   secondary: Colors.deepPurpleAccent,
+        // ),
+        useMaterial3: true, // Optional, for Material You support
       ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.green,
+        // colorScheme: ColorScheme.dark().copyWith(
+        //   primary: Colors.deepPurple,
+        //   secondary: Colors.deepPurpleAccent,
+        // ),
+        useMaterial3: true, // Optional, for Material You support
+      ),
+      themeMode: ThemeMode.system, // Automatically switch based on system settings
       home: const HomePage(),
     );
   }

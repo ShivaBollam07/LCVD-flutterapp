@@ -62,6 +62,7 @@ class PredictionDetailsPageState extends State<PredictionDetailsPage> {
       });
     } catch (e) {
       setState(() {
+        print(e);
         messages[messages.length - 1] = e.toString();
         isBotResponding = false;
         setMessages();
@@ -73,91 +74,88 @@ class PredictionDetailsPageState extends State<PredictionDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Details")),
-      body: Container(
-        color: Colors.grey[200], // Background color for the entire page
-        child: Column(
-          children: <Widget>[
-            PredictionCard(
-                predictionData: widget.predictionData,
-                active: false,
-                boxIndex: widget.boxIndex),
-            Expanded(
-              child: ListView.builder(
-                itemCount: messages.length + 1, // +1 for options
-                itemBuilder: (context, index) {
-                  if (index < messages.length) {
-                    // Display chat messages
-                    bool isUserMessage = index % 2 == 0;
-                    return Align(
-                      alignment: isUserMessage
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth: MediaQuery.sizeOf(context).width * 4 / 5),
-                        child: Container(
-                          padding: const EdgeInsets.all(10.0),
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5.0, horizontal: 10.0),
-                          decoration: BoxDecoration(
+      body: Column(
+        children: <Widget>[
+          PredictionCard(
+              predictionData: widget.predictionData,
+              active: false,
+              boxIndex: widget.boxIndex),
+          Expanded(
+            child: ListView.builder(
+              itemCount: messages.length + 1, // +1 for options
+              itemBuilder: (context, index) {
+                if (index < messages.length) {
+                  // Display chat messages
+                  bool isUserMessage = index % 2 == 0;
+                  return Align(
+                    alignment: isUserMessage
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          maxWidth: MediaQuery.sizeOf(context).width * 5 / 6),
+                      child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 5.0, horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: isUserMessage
+                              ? Theme.of(context).colorScheme.surfaceContainerHigh
+                              : Theme.of(context).colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Text(
+                          messages[index],
+                          style: TextStyle(
                             color: isUserMessage
-                                ? Colors.blue[100]
-                                : Colors.green[100],
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Text(
-                            messages[index],
-                            style: TextStyle(
-                              color: isUserMessage
-                                  ? Colors.blue[800]
-                                  : Colors.green[800],
-                            ),
+                                ? Theme.of(context).colorScheme.onPrimaryContainer
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
-                    );
-                  } else {
-                    // Display options after the last message
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: widget.predictionData.prediction == "Healthy" 
-                      ? <Widget>[] 
-                      : options.map((option) {
-                        return Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                            padding: const EdgeInsets.all(5.0),
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 1.0, horizontal: 10.0),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 115, 121,
-                                  126), // Slightly darker color than messages
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: InkWell(
-                              onTap: isBotResponding
-                                  ? null
-                                  : () => _sendMessage(option),
-                              child: Text(
-                                option,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: isBotResponding
-                                      ? Colors.grey
-                                      : Colors.white,
-                                ),
+                    ),
+                  );
+                } else {
+                  // Display options after the last message
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: widget.predictionData.prediction == "Healthy" 
+                    ? <Widget>[] 
+                    : options.map((option) {
+                      return Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          padding: const EdgeInsets.all(5.0),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 1.0, horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 115, 121,
+                                126), // Slightly darker color than messages
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: InkWell(
+                            onTap: isBotResponding
+                                ? null
+                                : () => _sendMessage(option),
+                            child: Text(
+                              option,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: isBotResponding
+                                    ? Colors.grey
+                                    : Colors.white,
                               ),
                             ),
                           ),
-                        );
-                      }).toList(),
-                    );
-                  }
-                },
-              ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                }
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

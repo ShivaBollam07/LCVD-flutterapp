@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lcvd/pages/prediction_details_page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -55,6 +56,8 @@ class PredictionCard extends StatelessWidget {
     return months[month - 1];
   }
 
+
+
   String _padZero(int number) {
     return number < 10 ? '0$number' : '$number';
   }
@@ -71,15 +74,21 @@ class PredictionCard extends StatelessWidget {
     );
   }
 
+  void _handleDelete() {
+    var predictionBox = Hive.box<PredictionData>('predictionBox');
+    predictionBox.deleteAt(boxIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: active ? () => _navigateToDetails(context) : () => {},
+      onTap: active ? () => _navigateToDetails(context) : null,
       child: Card(
-        elevation: 4.0,
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        elevation: 0,
         margin: const EdgeInsets.all(8.0),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(15),
           child: Row(
             children: [
               FutureBuilder<File?>(
@@ -102,7 +111,7 @@ class PredictionCard extends StatelessWidget {
                   } else {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(
-                          8.0), // Adjust the radius as needed
+                          16.0), // Adjust the radius as needed
                       child: SizedBox(
                         width: 100.0, // Fixed width to ensure proper layout
                         height: 100.0, // Fixed height to maintain aspect ratio
@@ -134,6 +143,7 @@ class PredictionCard extends StatelessWidget {
                   ],
                 ),
               ),
+              IconButton(onPressed: _handleDelete, icon: const Icon(Icons.remove_circle_outline))
             ],
           ),
         ),

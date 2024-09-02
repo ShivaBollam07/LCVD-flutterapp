@@ -8,6 +8,7 @@ import 'package:lcvd/models/prediction_data.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
+import 'package:image/image.dart' as img;
 
 class ImagePickerButton extends StatefulWidget {
   const ImagePickerButton({super.key});
@@ -48,26 +49,31 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
     }
   }
 
-  Future<void> _pickImageAndSave() async {
-    final picker = ImagePicker();
-
-    // Show dialog to choose between camera and gallery
+  Future<ImageSource?> _getImageSource() async {
     final source = await showDialog<ImageSource>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Image Source'),
         actions: <Widget>[
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.pop(context, ImageSource.camera),
             child: const Text('Camera'),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.pop(context, ImageSource.gallery),
             child: const Text('Gallery'),
           ),
         ],
       ),
     );
+    return source;
+  }
+
+  Future<void> _pickImageAndSave() async {
+    final picker = ImagePicker();
+
+    // Show dialog to choose between camera and gallery
+    final source = await _getImageSource(); 
 
     if (source != null) {
       // Pick the image
@@ -86,58 +92,73 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
         final fileName = path.basename(pickedFile.path);
 
         CroppedFile? croppedFile;
-        if (mounted){
+        if (mounted) {
           croppedFile = await ImageCropper().cropImage(
-          sourcePath: pickedFile.path,
-          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-          uiSettings: [
-            AndroidUiSettings(
-              toolbarTitle: 'Crop into the leaf',
-              hideBottomControls: true,
-              // toolbarColor: Colors.deepOrange,
-              // toolbarWidgetColor: Colors.white
-            ),
-            IOSUiSettings(
-              title: 'Crop into the leaf',
-            ),
-            WebUiSettings(
-              rotatable: false,
-              context: context,
-            ),
-          ],
-        );
+            sourcePath: pickedFile.path,
+            aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+            uiSettings: [
+              AndroidUiSettings(
+                toolbarTitle: 'Crop into the leaf',
+                hideBottomControls: true,
+              ),
+              IOSUiSettings(
+                title: 'Crop into the leaf',
+              ),
+              WebUiSettings(
+                rotatable: false,
+                context: context,
+              ),
+            ],
+          );
         }
-        
 
-        final savedImage = await File(croppedFile!.path)
-            .copy(path.join(imagesDir.path, fileName));
+        if (croppedFile != null) {
+          // Load the cropped image file into memory
+          final imageBytes = await croppedFile.readAsBytes();
 
-        
+          // Decode the image using the image package
+          img.Image? decodedImage = img.decodeImage(imageBytes);
 
-        PredictionData? predictionData = await uploadFile(
-            savedImage);
-        if (predictionData != null) {
-          _addPrediction(predictionData);
-
-          if (mounted) {
-            // Only use context if the widget is still mounted
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Image saved: ${savedImage.path}')),
+          // Resize the image to 100x100 pixels
+          if (decodedImage != null) {
+            img.Image resizedImage = img.copyResize(
+              decodedImage,
+              width: 100,
+              height: 100,
             );
-          }
-        } else {
-          await savedImage.delete();
-          if (mounted) {
-            // Only use context if the widget is still mounted
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('An error occured')),
-            );
+
+            // Encode the resized image back to a file
+            final resizedImageFile = File(croppedFile.path)
+              ..writeAsBytesSync(img.encodeJpg(resizedImage));
+
+            // Save the resized image to the desired location
+            final savedImage = await resizedImageFile
+                .copy(path.join(imagesDir.path, fileName));
+
+            PredictionData? predictionData = await uploadFile(savedImage);
+            if (predictionData != null) {
+              _addPrediction(predictionData);
+
+              if (mounted) {
+                // Only use context if the widget is still mounted
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Image saved: ${savedImage.path}')),
+                );
+              }
+            } else {
+              await savedImage.delete();
+              if (mounted) {
+                // Only use context if the widget is still mounted
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('An error occurred')),
+                );
+              }
+            }
           }
         }
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +171,7 @@ class ImagePickerButtonState extends State<ImagePickerButton> {
         await _pickImageAndSave();
       },
       tooltip: 'Pick Image',
-      child: const Icon(Icons.camera_alt),
+      child: const Icon(Icons.add),
     );
   }
 }

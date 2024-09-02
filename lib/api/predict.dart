@@ -7,6 +7,7 @@ import 'package:path/path.dart' as path;
 
 Future<PredictionData?> uploadFile(File file) async {
   try {
+    String imagePredictionURL = await EndPointsProvider.getImagePredictionURL();
     var dateTime = DateTime.now();
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(imagePredictionURL));

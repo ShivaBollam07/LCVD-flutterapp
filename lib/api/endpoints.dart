@@ -1,3 +1,26 @@
+import 'package:shared_preferences/shared_preferences.dart';
 
-const imagePredictionURL =  "https://lcda-backend.onrender.com/predict";
-const chatURL = "https://lcvd-chat.onrender.com/chat";
+class EndPointsProvider {
+  static const String _imagePredictionURL = "https://lcda-backend.onrender.com/predict";
+  static const String _chatURL = "https://lcvd-chat.onrender.com/chat";
+
+  static Future<String> getImagePredictionURL() async {
+    final sharedPreferences =await SharedPreferences.getInstance();
+    String? res =  sharedPreferences.getString("imagePredictionURL");
+    if (res == null){
+      return _imagePredictionURL;
+    }else{
+      return res;
+    }   
+  }
+
+  static Future<String> getChatURL() async {
+    final sharedPreferences =await SharedPreferences.getInstance();
+    String? res =  sharedPreferences.getString("chatURL");
+    if (res == null){
+      return _chatURL;
+    }else{
+      return res;
+    }   
+  }
+}

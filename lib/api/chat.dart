@@ -6,6 +6,8 @@ import 'package:lcvd/api/endpoints.dart';
 
 
 Future<String?> getChatResponse(String prompt, String disease) async {
+
+    var chatURL = await EndPointsProvider.getChatURL();
     
     var request = http.MultipartRequest('POST', Uri.parse(chatURL));
     request.fields.addAll(<String, String>{
@@ -24,6 +26,7 @@ Future<String?> getChatResponse(String prompt, String disease) async {
       // Extract the prediction field
       return jsonResponse['answer'];
     } else {
+      print(response.statusCode);
       throw Error();
     }
   
