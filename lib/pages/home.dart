@@ -46,7 +46,7 @@ class HomePageState extends State<HomePage> {
             itemCount: box.length,
             itemBuilder: (context, index) {
               final prediction = box.getAt(index);
-              return PredictionCard(predictionData: prediction!, active: prediction.prediction != "Healthy", boxIndex: index,);
+              return PredictionCard(predictionData: prediction!, active: !prediction.prediction!.contains("Healthy"), boxIndex: index,);
             },
           );
         },

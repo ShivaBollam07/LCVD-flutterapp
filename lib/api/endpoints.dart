@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EndPointsProvider {
-  static const String _imagePredictionURL = "https://lcda-backend.onrender.com/predict";
+  static const String _imagePredictionURL = "https://dlsathvik04-lcvd-vision.hf.space/predict";
   static const String _chatURL = "https://lcvd-chat.onrender.com/chat";
 
   static Future<String> getImagePredictionURL() async {

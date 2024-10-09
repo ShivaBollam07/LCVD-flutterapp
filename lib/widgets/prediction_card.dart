@@ -74,9 +74,13 @@ class PredictionCard extends StatelessWidget {
     );
   }
 
-  void _handleDelete() {
+  void _handleDelete(BuildContext context) {
     var predictionBox = Hive.box<PredictionData>('predictionBox');
     predictionBox.deleteAt(boxIndex);
+    
+    if (Navigator.canPop(context)){
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -129,9 +133,9 @@ class PredictionCard extends StatelessWidget {
                     Text(
                       predictionData.prediction ?? 'No prediction',
                       style: const TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
+                          fontSize: 14.0, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                      maxLines: 2,
                     ),
                     const SizedBox(height: 8.0),
                     Text(
@@ -143,7 +147,7 @@ class PredictionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(onPressed: _handleDelete, icon: const Icon(Icons.remove_circle_outline))
+              IconButton(onPressed: ()=>_handleDelete(context), icon: const Icon(Icons.delete))
             ],
           ),
         ),
