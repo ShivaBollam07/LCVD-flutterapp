@@ -1,45 +1,36 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lcvd/models/prediction_data.dart';
-import 'package:lcvd/pages/home.dart';
-
-
+import 'package:lcvd/models/prediction.dart';
+import 'package:lcvd/screens/home.dart';
+import 'package:lcvd/services/prediction_service.dart';
 
 void main() async {
   await Hive.initFlutter();
-  Hive.registerAdapter(PredictionDataAdapter());
-  await Hive.openBox<PredictionData>('predictionBox');
 
+  Hive.registerAdapter(PredictionAdapter());
+  await Hive.openBox<Prediction>(PredictionService.boxName);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: Colors.green,
-        // colorScheme: ColorScheme.fromSwatch(
-        //   primarySwatch: Colors.purple,
-        // ).copyWith(
-        //   secondary: Colors.deepPurpleAccent,
-        // ),
-        useMaterial3: true, // Optional, for Material You support
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: Colors.green,
-        // colorScheme: ColorScheme.dark().copyWith(
-        //   primary: Colors.deepPurple,
-        //   secondary: Colors.deepPurpleAccent,
-        // ),
-        useMaterial3: true, // Optional, for Material You support
-      ),
-      themeMode: ThemeMode.system, // Automatically switch based on system settings
-      home: const HomePage(),
-    );
+    return AdaptiveTheme(
+        light: ThemeData.light(useMaterial3: true),
+        dark: ThemeData.dark(useMaterial3: true),
+        initial: AdaptiveThemeMode.dark,
+        builder: (theme, darkTheme) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Adaptive Theme Demo',
+            theme: theme,
+            darkTheme: darkTheme,
+            home: const HomeScreen(),
+          );
+        });
   }
 }
-

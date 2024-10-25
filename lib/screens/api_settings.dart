@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class ApiSettings extends StatefulWidget {
+  const ApiSettings({super.key});
 
   @override
-  SettingsState createState() => SettingsState();
+  ApiSettingsState createState() => ApiSettingsState();
 }
 
-class SettingsState extends State<Settings> {
+class ApiSettingsState extends State<ApiSettings> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers to capture the input
-  final TextEditingController _imagePredictionURLController = TextEditingController();
+  final TextEditingController _imagePredictionURLController =
+      TextEditingController();
   final TextEditingController _chatURLController = TextEditingController();
 
   @override
@@ -26,11 +27,12 @@ class SettingsState extends State<Settings> {
     final sharedPreferences = await SharedPreferences.getInstance();
     if (_formKey.currentState?.validate() ?? false) {
       // If the form is valid, print the values
-      await sharedPreferences.setString("imagePredictionURL", _imagePredictionURLController.text);
+      await sharedPreferences.setString(
+          "imagePredictionURL", _imagePredictionURLController.text);
       await sharedPreferences.setString("chatURL", _chatURLController.text);
       _imagePredictionURLController.clear();
       _chatURLController.clear();
-    } 
+    }
   }
 
   @override
@@ -87,6 +89,6 @@ class SettingsState extends State<Settings> {
 
 void main() {
   runApp(const MaterialApp(
-    home: Settings(),
+    home: ApiSettings(),
   ));
 }

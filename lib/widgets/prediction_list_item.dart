@@ -1,92 +1,62 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:lcvd/pages/prediction_details_page.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
-import 'package:lcvd/models/prediction_data.dart';
+import 'package:lcvd/models/prediction.dart';
+import 'package:lcvd/screens/prediction_details.dart';
+import 'package:lcvd/services/format.dart';
+import 'package:lcvd/services/prediction_service.dart';
 
-class PredictionCard extends StatelessWidget {
-  final PredictionData predictionData;
-  final bool active;
-  final int boxIndex;
+class PredictionItem extends StatelessWidget {
+  final Prediction predictionData;
 
-  const PredictionCard({
+  const PredictionItem({
     required this.predictionData,
-    required this.active,
-    required this.boxIndex,
     super.key,
   });
-
-  Future<File?> _loadImage() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      final filePath =
-          path.join(directory.path, 'images', predictionData.imageName);
-      return File(filePath);
-    } catch (e) {
-      print('Error loading image: $e');
-      return null;
-    }
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    String formattedDate =
-        '${_getMonthName(dateTime.month)} ${dateTime.day}, ${dateTime.year}';
-    String formattedTime =
-        '${_padZero(dateTime.hour)}:${_padZero(dateTime.minute)}';
-    return '$formattedDate - $formattedTime';
-  }
-
-  String _getMonthName(int month) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    return months[month - 1];
-  }
-
-
-
-  String _padZero(int number) {
-    return number < 10 ? '0$number' : '$number';
-  }
 
   void _navigateToDetails(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PredictionDetailsPage(
-          predictionData: predictionData,
-          boxIndex: boxIndex,
+          prediction: predictionData,
         ),
       ),
     );
   }
 
-  void _handleDelete(BuildContext context) {
-    var predictionBox = Hive.box<PredictionData>('predictionBox');
-    predictionBox.deleteAt(boxIndex);
-    
-    if (Navigator.canPop(context)){
-      Navigator.pop(context);
-    }
+  void _confirmDeletion(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete Prediction"),
+          content:
+              const Text("Are you sure you want to delete this prediction?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await PredictionService.deletePrediction(predictionData);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Delete"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: active ? () => _navigateToDetails(context) : null,
+      onTap: () => _navigateToDetails(context),
+      onLongPress: () => _confirmDeletion(context), // Long press to delete
       child: Card(
         color: Theme.of(context).colorScheme.surfaceContainer,
         elevation: 0,
@@ -96,7 +66,7 @@ class PredictionCard extends StatelessWidget {
           child: Row(
             children: [
               FutureBuilder<File?>(
-                future: _loadImage(),
+                future: PredictionService.loadImageFile(predictionData),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const SizedBox(
@@ -114,11 +84,10 @@ class PredictionCard extends StatelessWidget {
                     );
                   } else {
                     return ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          16.0), // Adjust the radius as needed
+                      borderRadius: BorderRadius.circular(16.0),
                       child: SizedBox(
-                        width: 100.0, // Fixed width to ensure proper layout
-                        height: 100.0, // Fixed height to maintain aspect ratio
+                        width: 100.0,
+                        height: 100.0,
                         child: Image.file(snapshot.data!, fit: BoxFit.cover),
                       ),
                     );
@@ -131,7 +100,7 @@ class PredictionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      predictionData.prediction ?? 'No prediction',
+                      predictionData.prediction ?? 'Processing ...',
                       style: const TextStyle(
                           fontSize: 14.0, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
@@ -139,15 +108,14 @@ class PredictionCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8.0),
                     Text(
-                      _formatDateTime(predictionData.dateTime!),
+                      formatDateTime(predictionData.dateTime),
                       style: Theme.of(context).textTheme.bodyMedium,
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                      maxLines: 2,
                     ),
                   ],
                 ),
               ),
-              IconButton(onPressed: ()=>_handleDelete(context), icon: const Icon(Icons.delete))
             ],
           ),
         ),

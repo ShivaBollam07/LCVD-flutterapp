@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:lcvd/api/endpoints.dart';
-import 'package:lcvd/models/prediction_data.dart';
 import 'package:path/path.dart' as path;
+import 'package:lcvd/api/endpoints.dart';
 
-Future<PredictionData?> uploadFile(File file) async {
+Future<String?> getVisionPrediction(File file) async {
   try {
     String imagePredictionURL = await EndPointsProvider.getImagePredictionURL();
-    var dateTime = DateTime.now();
     // Create a multipart request
     var request = http.MultipartRequest('POST', Uri.parse(imagePredictionURL));
 
@@ -27,7 +25,7 @@ Future<PredictionData?> uploadFile(File file) async {
 
     if (response.statusCode == 200) {
       print('File uploaded successfully');
-      
+
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
       var jsonResponse = jsonDecode(responseString);
@@ -35,12 +33,7 @@ Future<PredictionData?> uploadFile(File file) async {
       if (jsonResponse['success'] == true) {
         String? prediction = jsonResponse['prediction'];
 
-        return PredictionData(
-          prediction: prediction,
-          dateTime: dateTime,
-          imageName: path.basename(file.path),
-          chat: List<String>.empty(growable: true)
-        );
+        return prediction;
       } else {
         print('File upload failed: Server returned success = false');
         return null;
